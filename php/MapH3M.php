@@ -83,7 +83,6 @@ Class MapH3M{
             $this->readFile();
             $this->ungzip(); // map is in the gzip archive. unarchive it
             $this->parse();
-            $this->displayBaseInfoMap();
         }
     }
     
@@ -188,12 +187,12 @@ Class MapH3M{
     
     public function getPlayerParamsWog(){
         // default code check
-        echo '<br>====================<br>';
-        for($i = $this->index; $i<= $this->index+50; $i++){
-            echo ord($this->filecontent[$i]).' ';
-        }
-        echo '<br>====================<br>';
-        // --------------------------------------
+//        echo '<br>====================<br>';
+//        for($i = $this->index; $i<= $this->index+50; $i++){
+//            echo ord($this->filecontent[$i]).' ';
+//        }
+//        echo '<br>====================<br>';
+//        // --------------------------------------
         
         $player['level_limit'] = ord($this->filecontent[$this->index]);$this->index++;
         $player['human'] = ord($this->filecontent[$this->index]);$this->index++;
@@ -290,7 +289,7 @@ Class MapH3M{
      */
     public function displayBaseInfoMap(){
         $output = '==============================='.'<br>';
-        $output .= $this->file_size.'('.$this->index.')'.'<br>';
+        $output .= 'File Size: '. $this->file_size.'('.$this->index.')'.'<br>';
         $output .= '==============================='.'<br>';
         $output .= $this->file.'('.$this->map_id.')'.'<br>';
         $output .= '==============================='.'<br>';
