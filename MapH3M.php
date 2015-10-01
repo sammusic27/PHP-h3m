@@ -182,7 +182,7 @@ Class MapH3M{
         // Map
         $this->map();
         // Objects
-        $this->objects();
+//        $this->objects();
     }
     
     

@@ -1,13 +1,14 @@
-h3m
-===
+# h3m
 
-PHP class for parsing Heroes of Might and Magic 3 map format
+PHP parser class of Heroes of Might and Magic 3 map format
 
-TODO
+  - Players attributes
+  - Special Victory/Loss conditions
+  - Teams
+  - Artefacts
+  - Rumors
+  - Display map (in progress)
 
-1) Players attributes
-2) Special Victory/Loss conditions
-3) Teams
-4) Artefacts
-5) Rumors
-6) Display map
+NodeJS parser
+
+  - Players attributes
