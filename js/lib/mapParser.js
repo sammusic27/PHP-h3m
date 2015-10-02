@@ -10,32 +10,35 @@ var RoERumors = require('./mapparser/roe/rumors');
 var RoEMap = require('./mapparser/roe/map');
 
 var MapParser = function(data){
-  var mapInfo = {};
+  // base object of map
+  var mapInfo = {
+    props: {}
+  };
 
   var index = 0;
   // get base data of map
   // hero on the map 1 byte
-  mapInfo.heroyOnTheMap = +data.readUIntLE(4, 0).toString(16);
+  mapInfo.props.heroyOnTheMap = +data.readUIntLE(4, 0).toString(16);
   // map size 4 bytes
-  mapInfo.mapSize = +data.readUIntLE(5, 4).toString(10);
+  mapInfo.props.mapSize = +data.readUIntLE(5, 4).toString(10);
   // is underground map exist 1 byte
-  mapInfo.isCaves = +data.readUIntLE(9, 0).toString(10);
+  mapInfo.props.isCaves = +data.readUIntLE(9, 0).toString(10);
 
   // read name length and name of the map
   var nameLength = +data.readUIntLE(10, 0).toString(10)
     + +data.readUIntLE(11, 0).toString(10)
     + +data.readUIntLE(12, 0).toString(10)
     + +data.readUIntLE(13, 0).toString(10);
-  mapInfo.name = data.toString('ascii', 14, 14 + nameLength);
+  mapInfo.props.name = data.toString('ascii', 14, 14 + nameLength);
   // read description length and description of the map
   var descriptionLength = +data.readUIntLE(14 + nameLength, 0).toString(10)
     + +data.readUIntLE(15 + nameLength, 0).toString(10)
     + +data.readUIntLE(16 + nameLength, 0).toString(10)
     + +data.readUIntLE(17 + nameLength, 0).toString(10);
-  mapInfo.description = data.toString('ascii', 18 + nameLength, 18 + nameLength + descriptionLength);
+  mapInfo.props.description = data.toString('ascii', 18 + nameLength, 18 + nameLength + descriptionLength);
   // map difficulty
   // 0 - easy, 1 - normal, 2 - hard, 3 - expert, 4 - impossible
-  mapInfo.difficalty = +data.readUIntLE(18 + nameLength + descriptionLength, 0).toString(10);
+  mapInfo.props.difficalty = +data.readUIntLE(18 + nameLength + descriptionLength, 0).toString(10);
 
   index = 18 + nameLength + descriptionLength;
 

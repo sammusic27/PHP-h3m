@@ -1,4 +1,4 @@
-var FileParser = require('./lib/parser');
+var FileParser = require('./lib/fileParser');
 var MapParser = require('./lib/mapParser');
 var fs = require('fs');
 
