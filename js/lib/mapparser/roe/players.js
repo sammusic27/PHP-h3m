@@ -3,6 +3,8 @@ var extend = require('extend');
 var RoEPlayers = function(data, index){
   var players = {};
 
+  // get details information by each player
+  // all players should be exists!
   players.red = extend({}, details());
   players.blue = extend({}, details());
   players.tan = extend({}, details());
@@ -45,6 +47,7 @@ var RoEPlayers = function(data, index){
     // crate heroy after create
     obj.createHero = +data.readUIntLE(index++, 0).toString(10);
 
+    // ?
     obj.heroes = data.readUIntLE(index++, 0).toString(16);
     if(obj.heroes != 'ff'){
         obj.hero = {};
@@ -70,6 +73,7 @@ var RoEPlayers = function(data, index){
 
     return obj;
   }
+  players.index = index;
 
   return players;
 }
