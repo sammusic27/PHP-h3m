@@ -4,7 +4,7 @@ var fs = require('fs');
 
 var file = 'Ascension.h3m';
 var fileOutput = 'ascension.json';
-FileParser('../maps/' + file, function(data){
+FileParser('../game/maps/' + file, function(data){
   var mapData = MapParser(data);
 
   fs.writeFile('./data/' + fileOutput, JSON.stringify(mapData), function (err) {
