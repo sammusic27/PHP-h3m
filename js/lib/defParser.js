@@ -166,9 +166,12 @@ var DefParser = function( data , fileSize ){
   function readBytes(from, length){
     var output = [];
     for(var i = index; i < index + length; i = i + 3){
-      var x = output.push(+data.readUIntLE(i, 0).toString(10));
-      var y = output.push(+data.readUIntLE(i + 1, 0).toString(10));
-      var n = output.push(+data.readUIntLE(i + 2, 0).toString(10));
+      var x = +data.readUIntLE(i, 0).toString(10);
+      var y = +data.readUIntLE(i + 1, 0).toString(10);
+      var n = +data.readUIntLE(i + 2, 0).toString(10);
+
+      
+
 
     }
     index = index + length;
