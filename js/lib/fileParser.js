@@ -6,6 +6,7 @@ var FileParser = function( file, callback, arch){
 
   var stats = fs.statSync(file)
   var fileSizeInBytes = stats["size"];
+  // console.log(fileSizeInBytes, 'SIZE');
 
   fs.readFile(file, function (err, data) {
     if(arch){

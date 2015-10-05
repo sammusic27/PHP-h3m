@@ -90,12 +90,12 @@ var DefParser = function( data , fileSize ){
 
   // console.log(index);
   h3def_frame_header = [];
-  // console.log(h3def_sequence.offsets);
+  console.log(h3def_sequence.offsets);
 
   // TODO: check length
   for(var i = 0; i < h3def_sequence.length; i++)
   {
-    index = h3def_sequence.offsets[i]; // test header
+    // index = h3def_sequence.offsets[i]; // test header
     // console.log(index);
     h3def_frame_header.push(read_f3def_frame_header());
     // console.log(i);
@@ -108,7 +108,7 @@ var DefParser = function( data , fileSize ){
     var obj = {};
     obj.data_size = +data.readUIntLE(index, 4).toString(10);
     index += 4;
-    obj.type = data.readUIntLE(index, 4).toString(16);
+    obj.type = +data.readUIntLE(index, 4).toString(10);
     index += 4;
     obj.width = +data.readUIntLE(index, 4).toString(10);
     index += 4;
@@ -122,39 +122,61 @@ var DefParser = function( data , fileSize ){
     index += 4;
     obj.y = +data.readUIntLE(index, 4).toString(10);
     index += 4;
-    obj.data = packBytes(index, obj.data_size);
+    switch(obj.type){
+      case 1: obj.data = packBytes(index, obj.data_size); break;
+      case 2:
+      case 3:
+        obj.data = readBytes(index, obj.data_size);
+        break;
+    }
+
 
     return obj;
   }
 
-
-
   function packBytes(from, length){
+    //console.log(index, length, index + length);
     var output = [];
     for(var i = index; i < index + length; i++){
       var count = +data.readUIntLE(i, 0).toString(10);
 
       if(count >= 128){
-        var count = 256 - count;
+        count = 256 - count;
         for(var j = 0 ; j <= count; j++){
           output.push(data.readUIntLE(i + 1, 0).toString(10));
         }
         i++;
       }else{
         for(var j = 0 ; j <= count; j++){
-          // console.log(index + i + j);
           if(i + j + 1 < fileSize){
             output.push(data.readUIntLE(i + j + 1, 0).toString(10));
+          }
+          else{
+            //console.log('ERR ',i + j + 1, fileSize);
           }
         }
         i = i + j;
       }
     }
+    index = index + length;
+
+    return output;
+  }
+
+  function readBytes(from, length){
+    var output = [];
+    for(var i = index; i < index + length; i = i + 3){
+      var x = output.push(+data.readUIntLE(i, 0).toString(10));
+      var y = output.push(+data.readUIntLE(i + 1, 0).toString(10));
+      var n = output.push(+data.readUIntLE(i + 2, 0).toString(10));
+
+    }
+    index = index + length;
+
     return output;
   }
 
   //TESTpackBytes();
-
   function HEX2DEC(number) {
     // Return error if number is not hexadecimal or contains more than ten characters (10 digits)
     if (!/^[0-9A-Fa-f]{1,10}$/.test(number)) return '#NUM!';
@@ -165,14 +187,13 @@ var DefParser = function( data , fileSize ){
     // Return decimal number
     return (decimal >= 549755813888) ? decimal - 1099511627776 : decimal;
   }
-
-  function TESTpackBytes(from, length){
+  function TESTpackBytes(){
     var input = ['FE','AA','02','80','00','2A','FD','AA','03','80','00','2A','22','F7','AA'];
     var output = [];
     for(var i = 0; i < input.length; i++){
       var count = HEX2DEC(input[i]);
       if(count >= 128){
-        var count = 256 - count;
+        count = 256 - count;
 
         for(var j = 0 ; j <= count; j++){
           output.push(input[i + 1]);

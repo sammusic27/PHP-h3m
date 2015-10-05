@@ -6,8 +6,8 @@ var fs = require('fs');
 // map parser example
 var map = 'Ascension.h3m';
 var mapOutput = 'ascension.json';
-FileParser('../game/maps/' + map, function(data){
-  var mapData = MapParser(data);
+FileParser('../game/maps/' + map, function(data, fileSize){
+  var mapData = MapParser(data, fileSize);
 
   fs.writeFile('./data/' + mapOutput, JSON.stringify(mapData), function (err) {
     if (err) throw err;
@@ -18,8 +18,8 @@ FileParser('../game/maps/' + map, function(data){
 // def parser example
 var def = 'CLRRVR.DEF';
 var defOutput = 'CLRRVR.def.json';
-FileParser('../game/defs/' + def, function(data){
-  var defData = DefParser(data);
+FileParser('../game/defs/' + def, function(data, fileSize){
+  var defData = DefParser(data, fileSize);
 
   fs.writeFile('./data/defs/' + defOutput, JSON.stringify(defData), function (err) {
     if (err) throw err;
