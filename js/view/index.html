@@ -8,10 +8,12 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script src="//cdn.techpines.io/jquery.event.drag-2.0.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
 </head>
 <body>
   <div id="wrapper">
     <canvas id="canvas" width="800" height="600">Your browser isn't support the canvas!</canvas>
+    <div id="game"></div>
   </div>
   <script type="text/javascript">
   App = {}
@@ -47,7 +49,20 @@
           App.draw(data); // Draw yourself.
           App.socket.emit('drawClick', data); // Broadcast draw.
       })
-  })
+  });
+
+  Crafty.init(300,300, document.getElementById('game'));
+
+  Crafty.e('Floor, 2D, Canvas, Color')
+    .attr({x: 0, y: 250, w: 250, h: 10})
+    .color('green');
+
+  Crafty.e('2D, Canvas, Color, Fourway, Gravity')
+    .attr({x: 0, y: 0, w: 50, h: 50})
+    .color('#F00')
+    .fourway(4)
+    .gravity('Floor');
+
   </script>
 </body>
 </html>

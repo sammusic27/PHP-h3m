@@ -1,12 +1,20 @@
 var fs = require('fs'),
   zlib = require('zlib');
 
-module.exports = function FileParser( file , callback){
+var FileParser = function( file, callback, arch){
+  var arch = arch || false;
+
   fs.readFile(file, function (err, data) {
-    zlib.gunzip(data, function(err, buffer) {
-      if (!err) {
-        return callback(buffer);
-      }
-    });
+    if(arch){
+      return callback(data);
+    }else{
+      zlib.gunzip(data, function(err, buffer) {
+        if (!err) {
+          return callback(buffer);
+        }
+      });
+    }
   });
 }
+
+module.exports = FileParser;
