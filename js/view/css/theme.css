@@ -1,7 +1,7 @@
 body{
   margin:0;
   color:#e2e2e2;
-  background: #232323;
+  background: #000;
   font: 12px/15px Arial, Helvetica, sans-serif;
 }
 #wrapper{
@@ -12,4 +12,10 @@ body{
 #canvas{
   border: 1px solid #f00;
   cursor: none;
+}
+
+span.cell{
+  width:10px;
+  height:10px;
+  float:left;
 }

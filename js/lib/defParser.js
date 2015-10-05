@@ -29,9 +29,9 @@ var DefParser = function( data ){
     var j = 0;
     for(var i = 0; i < count * 3; i = i + 3){
       h3def[j] = {
-        r: data.readUIntLE(start_index + i, 0).toString(10),
-        g: data.readUIntLE(start_index + i + 1, 0).toString(10),
-        b: data.readUIntLE(start_index + i + 2, 0).toString(10)
+        r: data.readUIntLE(start_index + i, 0).toString(16),
+        g: data.readUIntLE(start_index + i + 1, 0).toString(16),
+        b: data.readUIntLE(start_index + i + 2, 0).toString(16)
       }
       j++;
       index += 3;

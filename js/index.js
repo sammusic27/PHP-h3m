@@ -4,16 +4,16 @@ var DefParser = require('./lib/defParser');
 var fs = require('fs');
 
 // map parser example
-// var file = 'Ascension.h3m';
-// var fileOutput = 'ascension.json';
-// FileParser('../game/maps/' + file, function(data){
-//   var mapData = MapParser(data);
-//
-//   fs.writeFile('./data/' + fileOutput, JSON.stringify(mapData), function (err) {
-//     if (err) throw err;
-//     console.log('File "' + fileOutput + '" has been saved!');
-//   });
-// });
+var file = 'Ascension.h3m';
+var fileOutput = 'ascension.json';
+FileParser('../game/maps/' + file, function(data){
+  var mapData = MapParser(data);
+
+  fs.writeFile('./data/' + fileOutput, JSON.stringify(mapData), function (err) {
+    if (err) throw err;
+    console.log('File "' + fileOutput + '" has been saved!');
+  });
+});
 
 // def parser example
 var file = 'CLRRVR.DEF';
