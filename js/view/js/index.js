@@ -26,7 +26,7 @@ function spans(data){
       var span = '<span class="cell" style="background:#'+ data.header.h3def_color_indexed[pixel].r + data.header.h3def_color_indexed[pixel].g + data.header.h3def_color_indexed[pixel].b +'"></span>';
       $('#test').append(span);
       i++;
-      if(i == 32){
+      if(i == frame.img_width){
         i = 0;
         $('#test').append('<div style="clear:both;"></div>');
       }

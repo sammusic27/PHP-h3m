@@ -1,5 +1,5 @@
 
-var DefParser = function( data ){
+var DefParser = function( data , fileSize ){
   // struct h3def_color_indexed {
   // 	uint8_t r;
   // 	uint8_t g;
@@ -89,13 +89,16 @@ var DefParser = function( data ){
   //  };
 
   // console.log(index);
-
   h3def_frame_header = [];
   // console.log(h3def_sequence.offsets);
+
+  // TODO: check length
   for(var i = 0; i < h3def_sequence.length; i++)
   {
-    index = h3def_sequence.offsets[0]; // test header
+    index = h3def_sequence.offsets[i]; // test header
+    // console.log(index);
     h3def_frame_header.push(read_f3def_frame_header());
+    // console.log(i);
   }
   // console.log(h3def_frame_header[0].width);
   // console.log(h3def_frame_header[0].height);
@@ -124,10 +127,12 @@ var DefParser = function( data ){
     return obj;
   }
 
+
+
   function packBytes(from, length){
     var output = [];
     for(var i = index; i < index + length; i++){
-      var count = data.readUIntLE(i, 0).toString(10);
+      var count = +data.readUIntLE(i, 0).toString(10);
 
       if(count >= 128){
         var count = 256 - count;
@@ -137,7 +142,10 @@ var DefParser = function( data ){
         i++;
       }else{
         for(var j = 0 ; j <= count; j++){
-          output.push(data.readUIntLE(i + j + 1, 0).toString(10));
+          // console.log(index + i + j);
+          if(i + j + 1 < fileSize){
+            output.push(data.readUIntLE(i + j + 1, 0).toString(10));
+          }
         }
         i = i + j;
       }

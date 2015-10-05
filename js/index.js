@@ -4,25 +4,25 @@ var DefParser = require('./lib/defParser');
 var fs = require('fs');
 
 // map parser example
-var file = 'Ascension.h3m';
-var fileOutput = 'ascension.json';
-FileParser('../game/maps/' + file, function(data){
+var map = 'Ascension.h3m';
+var mapOutput = 'ascension.json';
+FileParser('../game/maps/' + map, function(data){
   var mapData = MapParser(data);
 
-  fs.writeFile('./data/' + fileOutput, JSON.stringify(mapData), function (err) {
+  fs.writeFile('./data/' + mapOutput, JSON.stringify(mapData), function (err) {
     if (err) throw err;
-    console.log('File "' + fileOutput + '" has been saved!');
+    console.log('File "' + mapOutput + '" has been saved!');
   });
 });
 
 // def parser example
-var file = 'CLRRVR.DEF';
-var fileOutput = 'CLRRVR.def.json';
-FileParser('../game/defs/' + file, function(data){
+var def = 'CLRRVR.DEF';
+var defOutput = 'CLRRVR.def.json';
+FileParser('../game/defs/' + def, function(data){
   var defData = DefParser(data);
 
-  fs.writeFile('./data/defs/' + fileOutput, JSON.stringify(defData), function (err) {
+  fs.writeFile('./data/defs/' + defOutput, JSON.stringify(defData), function (err) {
     if (err) throw err;
-    console.log('File "' + fileOutput + '" has been saved!');
+    console.log('File "' + defOutput + '" has been saved!');
   });
 }, true);
