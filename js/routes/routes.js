@@ -3,8 +3,8 @@ var dataLoader = require('../lib/loader.js');
 var Routes = function( app ){
 
   // get test map
-  app.get('/map', function(req, res) {
-    dataLoader('ascension.json')
+  app.get('/map/:name', function(req, res) {
+    dataLoader('maps/' + req.params.name + '.h3m.json')
       .fail(function (err) {
           res.status(500).send(err);
       })
@@ -14,8 +14,8 @@ var Routes = function( app ){
   });
 
   // get test def
-  app.get('/def', function(req, res) {
-    dataLoader('defs/CLRRVR.def.json')
+  app.get('/def/:name', function(req, res) {
+    dataLoader('defs/' + req.params.name + '.def.json')
       .fail(function (err) {
           res.status(500).send(err);
       })

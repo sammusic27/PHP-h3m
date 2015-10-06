@@ -90,7 +90,7 @@ var DefParser = function( data , fileSize ){
 
   // console.log(index);
   h3def_frame_header = [];
-  console.log(h3def_sequence.offsets);
+  console.log('offsets: ', h3def_sequence.offsets);
 
   // TODO: check length
   for(var i = 0; i < h3def_sequence.length; i++)
@@ -122,22 +122,79 @@ var DefParser = function( data , fileSize ){
     index += 4;
     obj.y = +data.readUIntLE(index, 4).toString(10);
     index += 4;
+    obj.data = [];
+
     switch(obj.type){
-      case 1: obj.data = packBytes(index, obj.data_size); break;
+      case 1:
+        obj.dataBase = readBytes(index, obj.data_size);
+        obj.data = myFormat(obj);
+
+        break;
       case 2:
       case 3:
         obj.data = readBytes(index, obj.data_size);
         break;
     }
 
-
     return obj;
+  }
+
+  function myFormat(obj)
+  {
+    var output = [];
+    var params = {};
+    var readerCount = 0;
+    var fromIndex = index;
+    for(var i = 0; i < obj.height; i++){
+      params[i] = {
+        offset: +data.readUIntLE(index++, 0).toString(10),
+        var1: +data.readUIntLE(index++, 0).toString(10),
+        var2: +data.readUIntLE(index++, 0).toString(10),
+        var3: +data.readUIntLE(index++, 0).toString(10)
+      }
+      readerCount += 4;
+    }
+
+    // console.log('index', index);
+
+    for(var i = fromIndex + readerCount; i < fromIndex + obj.data_size; i++){
+      var x = +data.readUIntLE(i, 0).toString(10);
+      // if(x > 0)
+      // {
+        output.push(x);
+      // }
+    }
+
+    // console.log(output.join(' '));
+    console.log(output.length);
+
+    return output;
+  }
+
+  function RLE(from, length){
+
+    //console.log(index, length, index + length);
+    var output = [];
+    for(var i = index; i < index + length; i = i + 2){
+      var x = +data.readUIntLE(i, 0).toString(10);
+      var y = +data.readUIntLE(i + 1, 0).toString(10);
+      // var n = +data.readUIntLE(i + 2, 0).toString(10);
+
+      for(var j = 0; j < y; j++){
+        output.push(x);
+      }
+
+    }
+    index = index + length;
+    return output;
   }
 
   function packBytes(from, length){
     //console.log(index, length, index + length);
     var output = [];
+    var out = [];
     for(var i = index; i < index + length; i++){
+      out.push(data.readUIntLE(i, 0).toString(16));
       var count = +data.readUIntLE(i, 0).toString(10);
 
       if(count >= 128){
@@ -147,7 +204,8 @@ var DefParser = function( data , fileSize ){
         }
         i++;
       }else{
-        for(var j = 0 ; j <= count; j++){
+        var j = 0;
+        for(j = 0 ; j <= count; j++){
           if(i + j + 1 < fileSize){
             output.push(data.readUIntLE(i + j + 1, 0).toString(10));
           }
@@ -160,21 +218,23 @@ var DefParser = function( data , fileSize ){
     }
     index = index + length;
 
+    // console.log('out int: ', out.join(' '));
+    // console.log('output int: ', output.join(' '));
+
     return output;
   }
 
   function readBytes(from, length){
     var output = [];
-    for(var i = index; i < index + length; i = i + 3){
-      var x = +data.readUIntLE(i, 0).toString(10);
-      var y = +data.readUIntLE(i + 1, 0).toString(10);
-      var n = +data.readUIntLE(i + 2, 0).toString(10);
-
-      
-
-
+    for(var i = index; i < index + length; i++){
+      output.push(+data.readUIntLE(i, 0).toString(10));
     }
-    index = index + length;
+    // for(var i = index; i < index + length; i = i + 3){
+    //   var x = +data.readUIntLE(i, 0).toString(10);
+    //   var y = +data.readUIntLE(i + 1, 0).toString(10);
+    //   var n = +data.readUIntLE(i + 2, 0).toString(10);
+    // }
+    // index = index + length;
 
     return output;
   }
@@ -195,6 +255,7 @@ var DefParser = function( data , fileSize ){
     var output = [];
     for(var i = 0; i < input.length; i++){
       var count = HEX2DEC(input[i]);
+
       if(count >= 128){
         count = 256 - count;
 

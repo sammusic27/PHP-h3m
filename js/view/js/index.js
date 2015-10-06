@@ -1,16 +1,23 @@
 $(document).ready(function(){
 
-  loadDef();
+  loadDef('adopb1b', function(){
+    loadDef('clrrvr', function(){
+
+    });
+  });
 
 });
 
-function loadDef( name ){
+function loadDef( name , callback ){
   $.ajax({
-    url: 'def',
+    url: 'def/'+name,
     type: 'GET',
     dataType: 'JSON',
     success: function(data){
+      palette(data.data);
       spans(data.data);
+
+      callback && callback();
     },
     error: function(err){
       console.error('ajax error', err);
@@ -18,28 +25,68 @@ function loadDef( name ){
   });
 }
 
+function palette(data){
+  var counter = 0;
+  for(var i in data.header.h3def_color_indexed){
+    var span = '<span class="cell" style="background:#'
+      + colorAdd(data.header.h3def_color_indexed[i].r)
+      + colorAdd(data.header.h3def_color_indexed[i].g)
+      + colorAdd(data.header.h3def_color_indexed[i].b)
+      +'">'+counter+'</span>';
+      counter++;
+    $('#palette').append(span);
+  }
+}
+
 function spans(data){
+  console.log(data);
+
   data.h3def_frame_header.forEach(function(frame){
     console.log(frame);
     var i = 0;
-    // for(var j = 0; j < frame.data.length; j = j + 3){
-    //   var span = '<span class="cell" style="background:#'+ frame.data[j] + frame.data[j + 1] + frame.data[j + 2] +'"></span>';
-    //   $('#test').append(span);
-    //   i++;
-    //   if(i == frame.img_width){
-    //       i = 0;
-    //       $('#test').append('<div style="clear:both;"></div>');
-    //     }
-    // }
+
+    var counter = 0;
+
+    if(frame.dataBase){
+      frame.dataBase.forEach(function(pixel){
+        var span = '<span class="cell" style="background:#'
+          + colorAdd(data.header.h3def_color_indexed[pixel].r)
+          + colorAdd(data.header.h3def_color_indexed[pixel].g)
+          + colorAdd(data.header.h3def_color_indexed[pixel].b)
+          +'">'+pixel + '('+counter+')'+'</span>';
+        $('#test').append(span);
+
+        i++;
+        if(i == frame.width){
+          i = 0;
+          $('#test').append('<div style="clear:both;"></div>');
+        }
+        counter++;
+      });
+      $('#test').append('<hr style="clear: both;">');
+    }
+
+    var counter = 0;
     frame.data.forEach(function(pixel){
-      var span = '<span class="cell" style="background:#'+ data.header.h3def_color_indexed[pixel].r + data.header.h3def_color_indexed[pixel].g + data.header.h3def_color_indexed[pixel].b +'"></span>';
+      var span = '<span class="cell" style="background:#'
+        + colorAdd(data.header.h3def_color_indexed[pixel].r)
+        + colorAdd(data.header.h3def_color_indexed[pixel].g)
+        + colorAdd(data.header.h3def_color_indexed[pixel].b)
+        +'">'+pixel + '('+counter+')'+'</span>';
       $('#test').append(span);
+
       i++;
-      if(i == frame.img_width){
+      if(i == frame.width){
         i = 0;
         $('#test').append('<div style="clear:both;"></div>');
       }
+      counter++;
     });
     $('#test').append('<div style="clear:both;"></div><br><br>');
   });
+}
+
+function colorAdd(color){
+  color = (color.length == 1) ? '0' + color : color;
+  return color;
 }
