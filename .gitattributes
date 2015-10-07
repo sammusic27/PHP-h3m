@@ -1,2 +1,0 @@
-*.def filter=lfs diff=lfs merge=lfs -text
-game/ filter=lfs diff=lfs merge=lfs -text
