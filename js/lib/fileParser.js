@@ -4,7 +4,7 @@ var fs = require('fs'),
 var FileParser = function( file, callback, archive){
   var archive = archive || false;
 
-  var stats = fs.statSync(file)
+  var stats = fs.statSync(file);
   var fileSizeInBytes = stats["size"];
 
   fs.readFile(file, function (err, data) {

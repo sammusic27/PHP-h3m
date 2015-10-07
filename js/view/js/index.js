@@ -1,10 +1,12 @@
 $(document).ready(function(){
 
   loadDef('adopb1b', function(){
-    loadDef('clrrvr', function(){
-
-    });
+    // loadDef('clrrvr', function(){
+    //
+    // });
   });
+
+
 
 });
 
@@ -66,6 +68,7 @@ function spans(data){
       $('#test').append('<hr style="clear: both;">');
     }
 
+    var i = 0;
     var counter = 0;
     frame.data.forEach(function(pixel){
       var span = '<span class="cell" style="background:#'
@@ -76,7 +79,7 @@ function spans(data){
       $('#test').append(span);
 
       i++;
-      if(i == frame.width){
+      if(i == frame.img_width + 1){
         i = 0;
         $('#test').append('<div style="clear:both;"></div>');
       }

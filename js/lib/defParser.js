@@ -93,18 +93,18 @@ var DefParser = function( data , fileSize ){
   console.log('offsets: ', h3def_sequence.offsets);
 
   // TODO: check length
-  for(var i = 0; i < h3def_sequence.length; i++)
+  for(var i = 0; i < h3def_sequence.offsets.length; i++)
   {
     // index = h3def_sequence.offsets[i]; // test header
     // console.log(index);
-    h3def_frame_header.push(read_f3def_frame_header());
+    h3def_frame_header.push(read_f3def_frame_header(i));
     // console.log(i);
   }
   // console.log(h3def_frame_header[0].width);
   // console.log(h3def_frame_header[0].height);
   // console.log(h3def_frame_header[0].data.length);
 
-  function read_f3def_frame_header(  ){
+  function read_f3def_frame_header( i ){
     var obj = {};
     obj.data_size = +data.readUIntLE(index, 4).toString(10);
     index += 4;
@@ -124,49 +124,148 @@ var DefParser = function( data , fileSize ){
     index += 4;
     obj.data = [];
 
+    console.log(obj);
+
     switch(obj.type){
       case 1:
         obj.dataBase = readBytes(index, obj.data_size);
-        obj.data = myFormat(obj);
+        obj.data = myFormatType1(obj);
 
+        //index -= 32;
         break;
       case 2:
       case 3:
-        obj.data = readBytes(index, obj.data_size);
+        obj.dataBase = readBytes(index, obj.data_size);
+        obj.data = myFormatType2(obj);
+
+        // index -= 32;
         break;
     }
 
     return obj;
   }
 
-  function myFormat(obj)
+  function myFormatType1(obj)
   {
     var output = [];
     var params = {};
     var readerCount = 0;
     var fromIndex = index;
+    var previousOffset = 0;
     for(var i = 0; i < obj.height; i++){
-      params[i] = {
-        offset: +data.readUIntLE(index++, 0).toString(10),
-        var1: +data.readUIntLE(index++, 0).toString(10),
-        var2: +data.readUIntLE(index++, 0).toString(10),
-        var3: +data.readUIntLE(index++, 0).toString(10)
+
+      var offset = +data.readUIntLE(index++, 0).toString(10);
+      previousOffset = offset;
+      var type = +data.readUIntLE(index++, 0).toString(10);
+
+      offset = 255 * type + offset;
+      if(type > 0){
+        offset += type;
       }
+
+      params[i] = {
+        offset: offset,
+        previousOffset: previousOffset,
+        type: type,
+        unknown1: +data.readUIntLE(index++, 0).toString(10),
+        unknown2: +data.readUIntLE(index++, 0).toString(10)
+      }
+
       readerCount += 4;
     }
 
-    // console.log('index', index);
+    for(var i = 0; i < obj.height; i++){
 
-    for(var i = fromIndex + readerCount; i < fromIndex + obj.data_size; i++){
-      var x = +data.readUIntLE(i, 0).toString(10);
-      // if(x > 0)
-      // {
-        output.push(x);
-      // }
+      var offsetPicX = +data.readUIntLE(fromIndex + params[i].offset, 0).toString(10);
+      index++;
+
+      // console.log('offsetPicX', offsetPicX, params[i].offset, params[i].previousOffset, params[i].type);
+
+      // fill zero
+      if(offsetPicX != 255){
+        for(var j = 0; j < offsetPicX; j++){
+          output.push(0);
+        }
+      }
+      if(offsetPicX == 255) offsetPicX = 0;
+
+      var start = fromIndex + params[i].offset;
+      var finish = fromIndex + params[i].offset + obj.width - offsetPicX;
+
+      // console.log(start, finish);
+      for(var j = start + 1; j <= finish + 1; j++){
+        output.push(+data.readUIntLE(j, 0).toString(10));
+        index++;
+      }
     }
 
     // console.log(output.join(' '));
-    console.log(output.length);
+    // console.log('Length: ', obj.width * obj.height, output.length);
+
+    return output;
+  }
+
+  function myFormatType2(obj)
+  {
+    var output = [];
+    var params = {};
+    var readerCount = 0;
+    var fromIndex = index;
+    var previousOffset = 0;
+    for(var i = 0; i < obj.height; i++){
+
+      var offset = +data.readUIntLE(index++, 0).toString(10);
+      previousOffset = offset;
+      var type = +data.readUIntLE(index++, 0).toString(10);
+
+      offset = 255 * type + offset;
+      if(type > 0){
+        offset += type;
+      }
+
+      params[i] = {
+        offset: offset,
+        previousOffset: previousOffset,
+        type: type,
+      }
+
+      readerCount += 2;
+    }
+
+    for(var i = 0; i < obj.img_height; i++){
+
+      var offsetPicX = +data.readUIntLE(fromIndex + params[i].offset, 0).toString(10);
+      index++;
+
+      console.log('offsetPicX', offsetPicX, params[i].offset, params[i].previousOffset, params[i].type);
+
+      // fill zero
+      if(offsetPicX != 255){
+        for(var j = 0; j < offsetPicX; j++){
+          output.push(0);
+        }
+      }
+      if(offsetPicX == 255) offsetPicX = 0;
+
+      var start = fromIndex + params[i].offset;
+      var finish = fromIndex + params[i].offset + obj.img_width - offsetPicX;
+
+      // console.log(start, finish, finish - start, obj.img_width);
+      for(var j = start + 1; j <= finish + 1; j++){
+        output.push(+data.readUIntLE(j, 0).toString(10));
+        index++;
+      }
+      if(finish - start > 0){
+        for(var j = 0; j < finish - start; j++){
+          output.push(0);
+        }
+      }
+
+      console.log(output.length / obj.img_width);
+    }
+
+    // console.log(output.join(' '));
+    console.log('Length: ', obj.width * obj.height, output.length);
 
     return output;
   }

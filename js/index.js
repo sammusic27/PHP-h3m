@@ -16,16 +16,16 @@ var fs = require('fs');
 // }, true);
 
 // def parser example
-// var def = 'CLRRVR.DEF';
-// var defOutput = def.toLowerCase() + '.json';
-// FileParser('../game/defs/' + def, function(data, fileSize){
-//   var defData = DefParser(data, fileSize);
-//
-//   fs.writeFile('./data/defs/' + defOutput, JSON.stringify(defData), function (err) {
-//     if (err) throw err;
-//     console.log('File "' + defOutput + '" has been saved!');
-//   });
-// });
+var def = 'CLRRVR.DEF';
+var defOutput = def.toLowerCase() + '.json';
+FileParser('../game/defs/' + def, function(data, fileSize){
+  var defData = DefParser(data, fileSize);
+
+  fs.writeFile('./data/defs/' + defOutput, JSON.stringify(defData), function (err) {
+    if (err) throw err;
+    console.log('File "' + defOutput + '" has been saved!');
+  });
+});
 
 // def parser example
 var def2 = 'ADOPB1B.DEF';
@@ -38,14 +38,14 @@ FileParser('../game/defs/' + def2, function(data, fileSize){
     console.log('File "' + defOutput2 + '" has been saved!');
   });
 });
-
-var def3 = 'AVA0001.def';
-var defOutput3 = def3.toLowerCase() + '.json';
-FileParser('../game/defs/' + def3, function(data, fileSize){
-  var defData = DefParser(data, fileSize);
-
-  fs.writeFile('./data/defs/' + defOutput3, JSON.stringify(defData), function (err) {
-    if (err) throw err;
-    console.log('File "' + defOutput3 + '" has been saved!');
-  });
-});
+//
+// var def3 = 'AVA0001.def';
+// var defOutput3 = def3.toLowerCase() + '.json';
+// FileParser('../game/defs/' + def3, function(data, fileSize){
+//   var defData = DefParser(data, fileSize);
+//
+//   fs.writeFile('./data/defs/' + defOutput3, JSON.stringify(defData), function (err) {
+//     if (err) throw err;
+//     console.log('File "' + defOutput3 + '" has been saved!');
+//   });
+// });
