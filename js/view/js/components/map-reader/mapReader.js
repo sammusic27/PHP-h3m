@@ -1,14 +1,3 @@
-$(document).ready(function(){
-  var APPWIDTH = 800
-    , APPHEIGHT = 600
-    ;
-
-    // setup base view
-  Crafty.init(APPWIDTH, APPHEIGHT);
-
-  loadMap('southern cross');
-});
-
 function loadMap( name , callback ){
   $.ajax({
     url: 'map/'+name,

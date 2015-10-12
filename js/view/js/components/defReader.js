@@ -1,15 +1,3 @@
-$(document).ready(function(){
-
-  loadDef('adopb1b', function(){
-    // loadDef('clrrvr', function(){
-    //
-    // });
-  });
-
-
-
-});
-
 function loadDef( name , callback ){
   $.ajax({
     url: 'def/'+name,
