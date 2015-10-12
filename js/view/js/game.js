@@ -4,14 +4,12 @@ $(document).ready(function(){
     ;
 
     // setup base view
-  Crafty.init(APPWIDTH, APPHEIGHT);
+  Crafty.init(APPWIDTH, APPHEIGHT, document.getElementById('game'));
 
-  loadMap('southern cross');
 
-  loadDef('adopb1b', function(){
-    // loadDef('clrrvr', function(){
-    //
-    // });
-  });
+  Crafty.defineScene("loading", SCENELoading);
+  Crafty.defineScene("devResource", SCENEDevResource);
+  Crafty.defineScene("game", SCENEGame);
 
+  Crafty.enterScene("loading");
 });

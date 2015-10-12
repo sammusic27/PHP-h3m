@@ -28,7 +28,8 @@ function createMiniMap( map ){
     , x = 0
     , y = 0
     ;
-  var mapWidth = mapHeight = map.props.mapSize * KMap;
+  var mapWidth = map.props.mapSize * KMap;
+  var mapHeight = mapWidth;
   if(map.props.isCaves){
     mapWidth += mapWidth;
   }
