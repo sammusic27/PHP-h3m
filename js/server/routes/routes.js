@@ -1,4 +1,4 @@
-var dataLoader = require('../lib/loader.js');
+var dataLoader = require('./loader.js');
 
 var Routes = function( app ){
 

@@ -7,8 +7,6 @@ var Rumors = function(data, index){
   obj.count += +data.readUIntLE(index++, 0).toString(10);
   obj.count += +data.readUIntLE(index++, 0).toString(10);
 
-console.log(obj.count);
-
   if( obj.count ){
       for(var i = obj.count; i < index + obj.count; i++){
           var rumor = [];
