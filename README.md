@@ -11,7 +11,7 @@ List features:
   - Teams
   - Artefacts
   - Rumors
-  - Display map (in progress)
+  - Display minimap (in progress)
 
 Code example:
 
@@ -33,7 +33,7 @@ List features:
   - Teams
   - Artefacts
   - Rumors
-  - Display map (in progress)
+  - Display minimap
 
 Requirements:
 
@@ -41,6 +41,6 @@ Requirements:
 
 Run   node js/index.js   and look at the console and the json data has been saved into  js/data  folder.
 
-## Server to interactive map (in progress)
+## Server interactive map (now shows the minimap only)
 
-File  js/server.js    run the server of node js which displays the canvas tag. Here should be display the map from json format.
+File  js/server/server.js  run the server of node js which displays the canvas tag. Here should be display the map from json format.
