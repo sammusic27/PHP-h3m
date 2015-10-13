@@ -7,5 +7,5 @@ function SCENELoading(){
 
   setTimeout(function(){
     Crafty.enterScene("devResource");
-  }, 2000);
+  }, 0);
 }

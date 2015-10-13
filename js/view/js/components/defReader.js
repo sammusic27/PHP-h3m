@@ -4,7 +4,7 @@ function loadDef( name , callback ){
     type: 'GET',
     dataType: 'JSON',
     success: function(data){
-      palette(data.data);
+      // palette(data.data);
       spans(data.data);
 
       callback && callback();
@@ -31,8 +31,11 @@ function palette(data){
 function spans(data){
   console.log(data);
 
+
+
   data.h3def_frame_header.forEach(function(frame){
-    console.log(frame);
+    // console.log(frame);
+    $('#test').append('<div>Type: ' + frame.type + '</div>');
     var i = 0;
 
     var counter = 0;
