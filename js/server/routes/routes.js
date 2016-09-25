@@ -1,10 +1,10 @@
-var dataLoader = require('../lib/loader.js');
+var dataLoader = require('./loader.js');
 
 var Routes = function( app ){
 
   // get test map
-  app.get('/map', function(req, res) {
-    dataLoader('ascension.json')
+  app.get('/map/:name', function(req, res) {
+    dataLoader('maps/' + req.params.name + '.h3m.json')
       .fail(function (err) {
           res.status(500).send(err);
       })
@@ -14,8 +14,13 @@ var Routes = function( app ){
   });
 
   // get test def
+<<<<<<< HEAD:js/routes/routes.js
   app.get('/def', function(req, res) {
     dataLoader('defs/ADOPB1B.DEF.json')
+=======
+  app.get('/def/:name', function(req, res) {
+    dataLoader('defs/' + req.params.name + '.def.json')
+>>>>>>> 84071ee78797931b79d7af8930ddb2260fd567f8:js/server/routes/routes.js
       .fail(function (err) {
           res.status(500).send(err);
       })

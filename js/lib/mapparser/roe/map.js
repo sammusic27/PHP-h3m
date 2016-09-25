@@ -1,7 +1,7 @@
 var Map = function(data, mapObject, index){
   var obj = {};
 
-  var count = mapObject.mapSize * mapObject.mapSize * 7;
+  var count = mapObject.props.mapSize * mapObject.props.mapSize * 7;
 
   obj.map = [];
   for(var i = index; i < index + count; i = i + 7){
@@ -17,7 +17,7 @@ var Map = function(data, mapObject, index){
   }
   index += count;
 
-  if(mapObject.isCaves){
+  if(mapObject.props.isCaves){
     obj.mapUnderground = [];
       for(var i = index; i < index + count; i = i + 7){
         obj.mapUnderground.push({

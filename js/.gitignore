@@ -1,2 +1,6 @@
 node_modules
 data/*
+
+# should be comment for live version
+view/dist
+view/dist/*

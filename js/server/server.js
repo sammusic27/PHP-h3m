@@ -7,7 +7,7 @@ var PORT = 7076;
 app.http().io();
 
 app.set('views', __dirname + '/');
-app.use(express["static"](path.join(__dirname, '/view/')));
+app.use(express["static"](path.join(__dirname, '/../view/')));
 
 require('./routes/routes')(app);
 

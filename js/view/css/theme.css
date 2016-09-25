@@ -5,7 +5,7 @@ body{
   font: 12px/15px Arial, Helvetica, sans-serif;
 }
 #wrapper{
-  width:1000px;
+  /*width:1000px;*/
   padding:25px 0;
   margin:0 auto;
 }
@@ -14,6 +14,9 @@ body{
   cursor: none;
 }
 
+h3{
+  clear:both;
+}
 span.cell{
   width:10px;
   height:10px;
