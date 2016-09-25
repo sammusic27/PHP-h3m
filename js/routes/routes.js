@@ -15,7 +15,7 @@ var Routes = function( app ){
 
   // get test def
   app.get('/def', function(req, res) {
-    dataLoader('defs/CLRRVR.def.json')
+    dataLoader('defs/ADOPB1B.DEF.json')
       .fail(function (err) {
           res.status(500).send(err);
       })
