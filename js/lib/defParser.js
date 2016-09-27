@@ -1,8 +1,13 @@
 var Header = require('./defparser/header');
 var Sequence = require('./defparser/sequence');
 
+var index = 0;
+
 var DefParser = function( data , fileSize ){
-  var index;
+
+
+  console.log('======DATA LENGTH--->>>', data.length);
+
   var def = {};
 
   // header
@@ -11,9 +16,12 @@ var DefParser = function( data , fileSize ){
   delete def.header._index;
 
   // sequence
-  def.h3def_sequence = Sequence(data, index);
-  index = def.h3def_sequence._index;
-  delete def.h3def_sequence._index;
+  def.h3def_sequence = [];
+  for(var i = 0; i < def.header.sequences_count; i++){
+    def.h3def_sequence.push(Sequence(data, index));
+    index = def.h3def_sequence[def.h3def_sequence.length - 1]._index;
+    delete def.h3def_sequence[def.h3def_sequence.length - 1]._index;
+  }
 
   // struct h3def_frame_header {
   //      uint32_t data_size;
@@ -27,16 +35,20 @@ var DefParser = function( data , fileSize ){
   //  };
 
   var h3def_frame_header = [];
-  console.log('offsets: ', def.h3def_sequence.offsets);
+  console.log('========h3def_sequence: ', def.h3def_sequence);
 
   // TODO: check length
-  for(var i = 0; i < def.h3def_sequence.offsets.length; i++)
-  {
-    // index = h3def_sequence.offsets[i]; // test header
-    h3def_frame_header.push(read_f3def_frame_header(i));
+  for(var j = 0; j < def.h3def_sequence.length; j++){
+    h3def_frame_header[j] = [];
+    for(var i = 0; i < def.h3def_sequence[j].offsets.length; i++){
+      h3def_frame_header[j].push(read_f3def_frame_header(def.h3def_sequence[j], i));
+    }
   }
 
-  function read_f3def_frame_header( i ){
+  console.log(index);
+
+
+  function read_f3def_frame_header(obj_sequence, i ){
     var obj = {};
     obj.data_size = +data.readUIntLE(index, 4).toString(10);
     index += 4;
@@ -58,17 +70,55 @@ var DefParser = function( data , fileSize ){
 
     switch(obj.type){
       case 1:
-        obj.dataBase = readBytes(index, obj.data_size);
-        obj.data = myFormatType(obj, def.h3def_sequence.offsets[i]);
+        obj.data = readRLEFormat_new(index, obj);
+        // obj.dataBase = readBytes(index, obj.data_size);
+        // obj.data = myFormatType(obj, obj_sequence.offsets[i]);
         break;
       case 2:
       case 3:
-        obj.dataBase = readBytes(index, obj.data_size);
-        obj.data = myFormatType(obj, def.h3def_sequence.offsets[i]);
+        obj.data = readRLEFormat_new(index, obj);
+        // obj.dataBase = readBytes(index, obj.data_size);
+        // obj.data = myFormatType(obj, obj_sequence.offsets[i]);
         break;
     }
 
     return obj;
+  }
+
+
+
+  function readRLEFormat_new(index, obj){
+    var frame = [];
+    console.log(obj);
+    console.log(obj.data_size + 32);
+    var predel = (obj.data_size + 32)/4;
+
+    for(var i = 0; i < predel; i++){
+      var v1 = +data.readUIntLE(index, 1).toString(10);
+      var v2 = +data.readUIntLE(index + 1, 1).toString(10);
+      var v3 = +data.readUIntLE(index + 2, 1).toString(10);
+      var v4 = +data.readUIntLE(index + 3, 1).toString(10);
+      frame.push([v1, v2, v3, v4]);
+
+      // var v1 = +data.readUIntLE(index, 4).toString(10);
+      // frame.push(v1);
+      // console.log(v1, v2, v3, v4);
+
+      index += 4;
+    }
+    console.log(frame, def.header.h3def_color_indexed);
+    console.log('frame length', frame.length, index);
+    return frame;
+  }
+
+
+
+  function readBytes(from, length){
+    var output = [];
+    for(var i = index; i < index + length; i++){
+      output.push(+data.readUIntLE(i, 0).toString(10));
+    }
+    return output;
   }
 
   function myFormatType(obj, globalOffset)
@@ -99,7 +149,7 @@ var DefParser = function( data , fileSize ){
             type: type,
             unknown1: +data.readUIntLE(index++, 0).toString(10),
             unknown2: +data.readUIntLE(index++, 0).toString(10),
-          }
+          };
           readerCount += 4;
           break;
         case 2:
@@ -108,140 +158,136 @@ var DefParser = function( data , fileSize ){
             offset: offset,
             l: length,
             type: type,
-          }
+          };
           readerCount += 2;
           break;
       }
     }
-    console.log('---------------------', obj.img_width, i, obj.img_height);
-    for(var j = 0 ; j < i; j++){
-      console.log(params[j].l);
-    }
-    console.log('---------------------');
+
+
+    // console.log('---------------------', obj.img_width, i, obj.img_height);
+    // for(var j = 0 ; j < i; j++){
+    //   console.log(params[j].l);
+    // }
+    // console.log('---------------------');
 
     // ------------- frame ----
 
-    for(var i = 0; i < obj.height; i++){
-      var offsetPicX = +data.readUIntLE(fromIndex + params[i].offset, 0).toString(10);
-      index++;
-
-      // fill zero before
-      if(offsetPicX != 255){
-        for(var j = 0; j <= offsetPicX; j++){
-          output.push(0);
-        }
-      }
-      if(offsetPicX == 255) offsetPicX = 0; // small hack
-
-      // get params
-      var start = fromIndex + params[i].offset + 2;
-      var finish = params[i].l - 1;
-
-      // console.log('---', offsetPicX, fromIndex + params[i].offset - 32, '---');
-
-      // set data
-      for(var j = start; j < length; j++){
-        output.push(+data.readUIntLE(j, 0).toString(10));
-        index++;
-      }
-
-      // fill zero after
-      if(finish > 0){
-        for(var j = 0; j < finish; j++){
-          output.push(0);
-        }
-      }
-    }
+    // for(var i = 0; i < obj.height; i++){
+    //   var offsetPicX = +data.readUIntLE(fromIndex + params[i].offset, 0).toString(10);
+    //   index++;
+    //
+    //   // fill zero before
+    //   if(offsetPicX != 255){
+    //     for(var j = 0; j <= offsetPicX; j++){
+    //       output.push(0);
+    //     }
+    //   }
+    //   if(offsetPicX == 255) offsetPicX = 0; // small hack
+    //
+    //   // get params
+    //   var start = fromIndex + params[i].offset + 2;
+    //   var finish = params[i].l - 1;
+    //
+    //   // console.log('---', offsetPicX, fromIndex + params[i].offset - 32, '---');
+    //
+    //   // set data
+    //   for(var j = start; j < length; j++){
+    //     output.push(+data.readUIntLE(j, 0).toString(10));
+    //     index++;
+    //   }
+    //
+    //   // fill zero after
+    //   if(finish > 0){
+    //     for(var j = 0; j < finish; j++){
+    //       output.push(0);
+    //     }
+    //   }
+    // }
     // console.log(output.join(' '));
     // console.log('Length: ', obj.width * obj.height, output.length);
 
     return output;
   }
 
-  function packBytes(from, length){
-    //console.log(index, length, index + length);
-    var output = [];
-    var out = [];
-    for(var i = index; i < index + length; i++){
-      out.push(data.readUIntLE(i, 0).toString(16));
-      var count = +data.readUIntLE(i, 0).toString(10);
+  // function packBytes(from, length){
+  //   //console.log(index, length, index + length);
+  //   var output = [];
+  //   var out = [];
+  //   for(var i = index; i < index + length; i++){
+  //     out.push(data.readUIntLE(i, 0).toString(16));
+  //     var count = +data.readUIntLE(i, 0).toString(10);
+  //
+  //     if(count >= 128){
+  //       count = 256 - count;
+  //       for(var j = 0 ; j <= count; j++){
+  //         output.push(data.readUIntLE(i + 1, 0).toString(10));
+  //       }
+  //       i++;
+  //     }else{
+  //       var j = 0;
+  //       for(j = 0 ; j <= count; j++){
+  //         if(i + j + 1 < fileSize){
+  //           output.push(data.readUIntLE(i + j + 1, 0).toString(10));
+  //         }
+  //         else{
+  //           //console.log('ERR ',i + j + 1, fileSize);
+  //         }
+  //       }
+  //       i = i + j;
+  //     }
+  //   }
+  //   index = index + length;
+  //
+  //   // console.log('out int: ', out.join(' '));
+  //   // console.log('output int: ', output.join(' '));
+  //
+  //   return output;
+  // }
 
-      if(count >= 128){
-        count = 256 - count;
-        for(var j = 0 ; j <= count; j++){
-          output.push(data.readUIntLE(i + 1, 0).toString(10));
-        }
-        i++;
-      }else{
-        var j = 0;
-        for(j = 0 ; j <= count; j++){
-          if(i + j + 1 < fileSize){
-            output.push(data.readUIntLE(i + j + 1, 0).toString(10));
-          }
-          else{
-            //console.log('ERR ',i + j + 1, fileSize);
-          }
-        }
-        i = i + j;
-      }
-    }
-    index = index + length;
 
-    // console.log('out int: ', out.join(' '));
-    // console.log('output int: ', output.join(' '));
 
-    return output;
-  }
-
-  function readBytes(from, length){
-    var output = [];
-    for(var i = index; i < index + length; i++){
-      output.push(+data.readUIntLE(i, 0).toString(10));
-    }
-    return output;
-  }
-
-  //TESTpackBytes();
-  function HEX2DEC(number) {
-    // Return error if number is not hexadecimal or contains more than ten characters (10 digits)
-    if (!/^[0-9A-Fa-f]{1,10}$/.test(number)) return '#NUM!';
-
-    // Convert hexadecimal number to decimal
-    var decimal = parseInt(number, 16);
-
-    // Return decimal number
-    return (decimal >= 549755813888) ? decimal - 1099511627776 : decimal;
-  }
-  function TESTpackBytes(){
-    var input = ['FE','AA','02','80','00','2A','FD','AA','03','80','00','2A','22','F7','AA'];
-    var output = [];
-    for(var i = 0; i < input.length; i++){
-      var count = HEX2DEC(input[i]);
-
-      if(count >= 128){
-        count = 256 - count;
-
-        for(var j = 0 ; j <= count; j++){
-          output.push(input[i + 1]);
-        }
-        i++;
-      }else{
-        var j = 0;
-        for(j = 0 ; j <= count; j++){
-          output.push(input[i + j + 1]);
-        }
-        i = i + j;
-      }
-    }
-    console.log(input.join(" "));
-    console.log('---');
-    console.log(output.join(" "));
-    console.log('AA AA AA 80 00 2A AA AA AA AA 80 00 2A 22 AA AA AA AA AA AA AA AA AA AA');
-  }
+  // TESTpackBytes();
+  // function HEX2DEC(number) {
+  //   // Return error if number is not hexadecimal or contains more than ten characters (10 digits)
+  //   if (!/^[0-9A-Fa-f]{1,10}$/.test(number)) return '#NUM!';
+  //
+  //   // Convert hexadecimal number to decimal
+  //   var decimal = parseInt(number, 16);
+  //
+  //   // Return decimal number
+  //   return (decimal >= 549755813888) ? decimal - 1099511627776 : decimal;
+  // }
+  // function TESTpackBytes(){
+  //   var input = ['FE','AA','02','80','00','2A','FD','AA','03','80','00','2A','22','F7','AA'];
+  //   var output = [];
+  //   for(var i = 0; i < input.length; i++){
+  //     var count = HEX2DEC(input[i]);
+  //
+  //     if(count >= 128){
+  //       count = 256 - count;
+  //
+  //       for(var j = 0 ; j <= count; j++){
+  //         output.push(input[i + 1]);
+  //       }
+  //       i++;
+  //     }else{
+  //       var j = 0;
+  //       for(j = 0 ; j <= count; j++){
+  //         output.push(input[i + j + 1]);
+  //       }
+  //       i = i + j;
+  //     }
+  //   }
+  //   console.log(input.join(" "));
+  //   console.log('---');
+  //   console.log(output.join(" "));
+  //   console.log('AA AA AA 80 00 2A AA AA AA AA 80 00 2A 22 AA AA AA AA AA AA AA AA AA AA');
+  // }
 
   def.h3def_frame_header = h3def_frame_header;
 
   return def;
-}
+};
 
 module.exports = DefParser;

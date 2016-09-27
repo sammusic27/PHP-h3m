@@ -4,7 +4,7 @@ function loadDef( name , callback ){
     type: 'GET',
     dataType: 'JSON',
     success: function(data){
-      // palette(data.data);
+      palette(data.data);
       spans(data.data);
 
       callback && callback();
@@ -61,22 +61,25 @@ function spans(data){
 
     var i = 0;
     var counter = 0;
-    frame.data.forEach(function(pixel){
-      var span = '<span class="cell" style="background:#'
-        + colorAdd(data.header.h3def_color_indexed[pixel].r)
-        + colorAdd(data.header.h3def_color_indexed[pixel].g)
-        + colorAdd(data.header.h3def_color_indexed[pixel].b)
-        +'">'+pixel + '('+counter+')'+'</span>';
-      $('#test').append(span);
+    if(frame.data && frame.data.length) {
+      frame.data.forEach(function (pixel) {
+        var span = '<span class="cell" style="background:#'
+          + colorAdd(data.header.h3def_color_indexed[pixel].r)
+          + colorAdd(data.header.h3def_color_indexed[pixel].g)
+          + colorAdd(data.header.h3def_color_indexed[pixel].b)
+          + '">' + pixel + '(' + counter + ')' + '</span>';
+        $('#test').append(span);
 
-      i++;
-      if(i == frame.img_width + 1){
-        i = 0;
-        $('#test').append('<div style="clear:both;"></div>');
-      }
-      counter++;
-    });
+        i++;
+        if (i == frame.img_width + 1) {
+          i = 0;
+          $('#test').append('<div style="clear:both;"></div>');
+        }
+        counter++;
+      });
+    }
     $('#test').append('<div style="clear:both;"></div><br><br>');
+
   });
 }
 

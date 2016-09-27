@@ -18,10 +18,21 @@ var Sequence = function( data , index){
   h3def_sequence.unknown2 = data.readUIntLE(index, 4).toString(16);
   index += 4;
 
+  function check_name(name, defaultNameLength){
+    var n = name.split('.');
+    if(n.length > 1 && n[1].length > 3){
+      defaultNameLength = defaultNameLength - n[1].length - 3;
+      n[1] = n[1].slice(0, 3);
+      return n.join('.');
+    }
+    return name;
+  }
+
   h3def_sequence.names = [];
   var defaultNameLength = 13;
   for(var i = 0; i < h3def_sequence.length; i++){
     h3def_sequence.names.push(data.toString(undefined, index, index + defaultNameLength - 1));
+    h3def_sequence.names[i] = check_name(h3def_sequence.names[i], defaultNameLength);
     index += defaultNameLength;
   }
 
@@ -33,6 +44,8 @@ var Sequence = function( data , index){
   h3def_sequence._index = index;
 
   return h3def_sequence;
-}
+};
+
+
 
 module.exports = Sequence;

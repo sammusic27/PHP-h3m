@@ -14,13 +14,8 @@ var Routes = function( app ){
   });
 
   // get test def
-<<<<<<< HEAD:js/routes/routes.js
-  app.get('/def', function(req, res) {
-    dataLoader('defs/ADOPB1B.DEF.json')
-=======
   app.get('/def/:name', function(req, res) {
     dataLoader('defs/' + req.params.name + '.def.json')
->>>>>>> 84071ee78797931b79d7af8930ddb2260fd567f8:js/server/routes/routes.js
       .fail(function (err) {
           res.status(500).send(err);
       })
@@ -49,6 +44,6 @@ var Routes = function( app ){
   app.io.route('drawClick', function(req) {
       req.io.broadcast('draw', req.data)
   });
-}
+};
 
 module.exports = Routes;

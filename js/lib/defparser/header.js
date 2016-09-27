@@ -30,7 +30,7 @@ var Header = function( data , index){
         r: data.readUIntLE(start_index + i, 0).toString(16),
         g: data.readUIntLE(start_index + i + 1, 0).toString(16),
         b: data.readUIntLE(start_index + i + 2, 0).toString(16)
-      }
+      };
       j++;
       index += 3;
     }
@@ -42,6 +42,6 @@ var Header = function( data , index){
   header._index = index;
 
   return header;
-}
+};
 
 module.exports = Header;
