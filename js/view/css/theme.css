@@ -18,7 +18,21 @@ h3{
   clear:both;
 }
 span.cell{
-  width:30px;
-  height:30px;
+  width:60px;
+  height:60px;
   float:left;
+  border: 1px solid #f00;
+}
+
+#minimap,
+#game,
+#test,
+#palette{
+  clear: both;
+  width: 100%;
+  overflow: hidden;
+}
+
+#test{
+  border: 1px solid #fff;
 }

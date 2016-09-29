@@ -16,7 +16,7 @@ var fs = require('fs');
 // }, true);
 
 // def parser example
-var def = 'AB01_.def';
+var def = 'adag.def';
 var defOutput = def.toLowerCase() + '.json';
 FileParser('../game/defs/' + def, function(data, fileSize){
   var defData = DefParser(data, fileSize);

@@ -35,7 +35,7 @@ var DefParser = function( data , fileSize ){
   //  };
 
   var h3def_frame_header = [];
-  console.log('========h3def_sequence: ', def.h3def_sequence);
+  console.log('========h3def_sequence: ', def.h3def_sequence[0]);
 
   // TODO: check length
   for(var j = 0; j < def.h3def_sequence.length; j++){
@@ -89,8 +89,8 @@ var DefParser = function( data , fileSize ){
 
   function readRLEFormat_new(index, obj){
     var frame = [];
-    console.log(obj);
-    console.log(obj.data_size + 32);
+    // console.log(obj);
+    // console.log(obj.data_size + 32);
     var predel = (obj.data_size + 32)/4;
 
     for(var i = 0; i < predel; i++){
@@ -102,12 +102,12 @@ var DefParser = function( data , fileSize ){
 
       // var v1 = +data.readUIntLE(index, 4).toString(10);
       // frame.push(v1);
-      // console.log(v1, v2, v3, v4);
+      console.log(v1, v2, v3, v4);
 
       index += 4;
     }
-    console.log(frame, def.header.h3def_color_indexed);
-    console.log('frame length', frame.length, index);
+    // console.log(frame, def.header.h3def_color_indexed);
+    // console.log('frame length', frame.length, index);
     return frame;
   }
 
