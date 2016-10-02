@@ -35,20 +35,22 @@ var DefParser = function( data , fileSize ){
   //  };
 
   var h3def_frame_header = [];
-  console.log('========h3def_sequence: ', def.h3def_sequence[0]);
+  // console.log('========h3def_sequence: ', def.h3def_sequence);
 
   // TODO: check length
   for(var j = 0; j < def.h3def_sequence.length; j++){
     h3def_frame_header[j] = [];
     for(var i = 0; i < def.h3def_sequence[j].offsets.length; i++){
-      h3def_frame_header[j].push(read_f3def_frame_header(def.h3def_sequence[j], i));
+      h3def_frame_header[j].push(read_f3def_frame_header(def.h3def_sequence[j].offsets, i));
     }
   }
 
   console.log(index);
+  console.log(h3def_frame_header[0][0].data);
 
 
   function read_f3def_frame_header(obj_sequence, i ){
+    index = obj_sequence[i];
     var obj = {};
     obj.data_size = +data.readUIntLE(index, 4).toString(10);
     index += 4;
@@ -68,19 +70,42 @@ var DefParser = function( data , fileSize ){
     index += 4;
     obj.data = [];
 
+
+
+    var offset_small = data.readUIntLE(obj_sequence[i] + 32).toString(10);
+    var start = obj_sequence[i]  + 32 + +offset_small;
+    var end = obj_sequence.length - 1 == i ? data.length - obj.data_size : obj_sequence[i + 1];
+    var buffer = [];
+
+    index = end;
+
+
+
+    // console.log(obj);
+    // console.log(index);
     switch(obj.type){
       case 1:
-        obj.data = readRLEFormat_new(index, obj);
+
+        buffer = data.slice(start, end);
+        // obj.data = readRLEFormat_new(index, obj);
         // obj.dataBase = readBytes(index, obj.data_size);
         // obj.data = myFormatType(obj, obj_sequence.offsets[i]);
         break;
       case 2:
       case 3:
-        obj.data = readRLEFormat_new(index, obj);
+        buffer = data.slice(start, end);
+        // obj.data = readRLEFormat_new(index, obj);
         // obj.dataBase = readBytes(index, obj.data_size);
         // obj.data = myFormatType(obj, obj_sequence.offsets[i]);
         break;
     }
+
+    console.log('Buffer length = ', buffer.length, start, end);
+
+    for(var k = 0; k < buffer.length; k++){
+      obj.data.push(buffer.readUIntLE(k, 1).toString(10));
+    }
+
 
     return obj;
   }
@@ -91,7 +116,7 @@ var DefParser = function( data , fileSize ){
     var frame = [];
     // console.log(obj);
     // console.log(obj.data_size + 32);
-    var predel = (obj.data_size + 32)/4;
+    var predel = (obj.data_size )/4;
 
     for(var i = 0; i < predel; i++){
       var v1 = +data.readUIntLE(index, 1).toString(10);
@@ -108,6 +133,7 @@ var DefParser = function( data , fileSize ){
     }
     // console.log(frame, def.header.h3def_color_indexed);
     // console.log('frame length', frame.length, index);
+    console.log(index);
     return frame;
   }
 

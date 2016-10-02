@@ -21,7 +21,37 @@ span.cell{
   width:60px;
   height:60px;
   float:left;
-  border: 1px solid #f00;
+  /*border: 1px solid #f00;*/
+}
+span.cell-2{
+  width:120px;
+}
+span.cell-3{
+  width:180px;
+}
+span.cell-4{
+  width:240px;
+}
+span.cell-5{
+  width:300px;
+}
+span.cell-6{
+  width:360px;
+}
+span.cell-7{
+  width:420px;
+}
+span.cell-8{
+  width:480px;
+}
+span.cell-9{
+  width:540px;
+}
+span.cell-10{
+  width:600px;
+}
+span.cell-11{
+  width:660px;
 }
 
 #minimap,

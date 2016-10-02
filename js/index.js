@@ -27,6 +27,17 @@ FileParser('../game/defs/' + def, function(data, fileSize){
   });
 });
 
+// var def = 'AB01_.def';
+// var defOutput = def.toLowerCase() + '.json';
+// FileParser('../game/defs/' + def, function(data, fileSize){
+//   var defData = DefParser(data, fileSize);
+//
+//   fs.writeFile('./data/defs/' + defOutput, JSON.stringify(defData), function (err) {
+//     if (err) throw err;
+//     console.log('File "' + defOutput + '" has been saved!');
+//   });
+// });
+
 // def parser example
 // var def2 = 'ADOPB1B.DEF';
 // var defOutput2 = def2.toLowerCase() + '.json';

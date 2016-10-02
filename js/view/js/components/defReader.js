@@ -42,68 +42,75 @@ function spans(data){
 
       var counter = 0;
 
-      if(frame.dataBase){
-        frame.dataBase.forEach(function(pixel){
-          var span = '<span class="cell" style="background:#'
-            + colorAdd(data.header.h3def_color_indexed[pixel].r)
-            + colorAdd(data.header.h3def_color_indexed[pixel].g)
-            + colorAdd(data.header.h3def_color_indexed[pixel].b)
-            +'">'+pixel + '('+counter+')'+'</span>';
-          $('#test').append(span);
-
-          i++;
-          if(i == frame.width){
-            i = 0;
-            $('#test').append('<div style="clear:both;"></div>');
-          }
-          counter++;
-        });
-        $('#test').append('<hr style="clear: both;">');
-      }
+      // if(frame.dataBase){
+      //   frame.dataBase.forEach(function(pixel){
+      //     var span = '<span class="cell" style="background:#'
+      //       + colorAdd(data.header.h3def_color_indexed[pixel].r)
+      //       + colorAdd(data.header.h3def_color_indexed[pixel].g)
+      //       + colorAdd(data.header.h3def_color_indexed[pixel].b)
+      //       +'">'+pixel + '('+counter+')'+'</span>';
+      //     $('#test').append(span);
+      //
+      //     i++;
+      //     if(i == frame.width){
+      //       i = 0;
+      //       $('#test').append('<div style="clear:both;"></div>');
+      //     }
+      //     counter++;
+      //   });
+      //   $('#test').append('<hr style="clear: both;">');
+      // }
 
       var i = 0;
       var counter = 0;
+      var width_help = 0;
+      var height_help = 0;
       if(frame.data && frame.data.length) {
-        frame.data.forEach(function (pixel) {
-          // console.log(pixel);
-          var span = '<span class="cell" style="background:#'
-            + colorAdd(data.header.h3def_color_indexed[pixel[0]].r)
-            + colorAdd(data.header.h3def_color_indexed[pixel[0]].g)
-            + colorAdd(data.header.h3def_color_indexed[pixel[0]].b)
-            + '">' + pixel[0] + '(' + counter + ')' + '</span>';
+        frame.data.forEach(function (pixel, index) {
+          pixel = +pixel;
+          if(pixel < 200){
+            var p1 = frame.data[index];
+            var p2 = frame.data[index + 1];
 
-            $('#test').append(span);
+            if(pixel < 10 && width_help + pixel + 1 >= frame.img_width){
+              width_help += pixel + 1;
+              var span = '<span class="cell cell-' + (pixel + 1) + '" style="background:#'
+                + colorAdd(data.header.h3def_color_indexed[0].r)
+                + colorAdd(data.header.h3def_color_indexed[0].g)
+                + colorAdd(data.header.h3def_color_indexed[0].b)
+                + '">' + pixel + '(' + counter + ')' + '</span>';
 
-          var span = '<span class="cell" style="background:#'
-            + colorAdd(data.header.h3def_color_indexed[pixel[1]].r)
-            + colorAdd(data.header.h3def_color_indexed[pixel[1]].g)
-            + colorAdd(data.header.h3def_color_indexed[pixel[1]].b)
-            + '">' + pixel[1] + '(' + counter + ')' + '</span>';
+              $('#test').append(span);
+              $('#test').append('<div style="clear:both;"></div>');
+              width_help = 0;
+            } else {
 
-          $('#test').append(span);
+            if(p2 > 200){
+              width_help += pixel + 1;
+              var span = '<span class="cell cell-' + (pixel + 1) + '" style="background:#'
+                + colorAdd(data.header.h3def_color_indexed[0].r)
+                + colorAdd(data.header.h3def_color_indexed[0].g)
+                + colorAdd(data.header.h3def_color_indexed[0].b)
+                + '">' + pixel + '(' + counter + ')' + '</span>';
 
-          var span = '<span class="cell" style="background:#'
-            + colorAdd(data.header.h3def_color_indexed[pixel[2]].r)
-            + colorAdd(data.header.h3def_color_indexed[pixel[2]].g)
-            + colorAdd(data.header.h3def_color_indexed[pixel[2]].b)
-            + '">' + pixel[2] + '(' + counter + ')' + '</span>';
+              $('#test').append(span);
+            } else {
+              width_help++;
+              var span = '<span class="cell" style="background:#'
+                + colorAdd(data.header.h3def_color_indexed[pixel].r)
+                + colorAdd(data.header.h3def_color_indexed[pixel].g)
+                + colorAdd(data.header.h3def_color_indexed[pixel].b)
+                + '">' + pixel + '(' + counter + ')' + '</span>';
 
-          $('#test').append(span);
+              $('#test').append(span);
+            }
 
-          var span = '<span class="cell" style="background:#'
-            + colorAdd(data.header.h3def_color_indexed[pixel[3]].r)
-            + colorAdd(data.header.h3def_color_indexed[pixel[3]].g)
-            + colorAdd(data.header.h3def_color_indexed[pixel[3]].b)
-            + '">' + pixel[3] + '(' + counter + ')' + '</span>';
-
-          $('#test').append(span);
-
-          i = i + 2;
-          if (i == frame.img_width + 1) {
-            i = 0;
-            $('#test').append('<div style="clear:both;"></div>');
+            if(width_help >= frame.img_width){
+              $('#test').append('<div style="clear:both;"></div>');
+              width_help = 0;
+            }
+            }
           }
-          counter++;
         });
       }
       $('#test').append('<div style="clear:both;"></div><br><br>');
